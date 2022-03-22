@@ -19,7 +19,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
+Route::get('/pesanan', [HomeController::class, 'pesanan'])->name('pesanan');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');

@@ -60,6 +60,14 @@
             border-radius: 10px;
             color: white;
         }
+
+        .total-product-done{
+            background-color: #435ebe;
+            text-align: center;
+            border-radius: 10px;
+            color: white;
+        }
+
     </style>
 @endsection
 @section('page-heading')
@@ -80,10 +88,10 @@
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-6">
-                                    <p>Jumlah </p>
+                                    <p><i class="bi bi-cart-fill" style="color: #4fbe87;"></i>  Total</p>
                                 </div>
                                 <div class="col-5">
-                                    <p class="total-product">3</p>
+                                    <p id="total-product" class="total-product">3</p>
                                 </div>
                             </div>
                         </div>
@@ -97,15 +105,12 @@
                     <div class="row">
                         <div class="col-12">
                             <b>Produk</b><br>
-                            <p>Pesanan Kamu</p>
+                            <p>Total bayar</p>
                         </div>
                         <div class="col-12">
                             <div class="row">
-                                <div class="col-6">
-                                    <p>Jumlah : </p>
-                                </div>
-                                <div class="col-5">
-                                    <p>3</p>
+                                <div class="col-12">
+                                    <p> <i class="bi bi-credit-card-fill" style="color: #435ebe;margin-right: 10px;"></i> Rp. <span id="total-payment">10.000</span></p>
                                 </div>
                             </div>
                         </div>
@@ -114,14 +119,6 @@
             </div>
         </div>
     </div>
-
-
-<div class="form-group position-relative has-icon-right m-3">
-    <input type="text" class="form-control" placeholder="Cari Produk ... ">
-    <div class="form-control-icon">
-        <i class="bi bi-search"></i>
-    </div>
-</div>
 
 @endsection
 @section('content')

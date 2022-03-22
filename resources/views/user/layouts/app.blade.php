@@ -103,6 +103,34 @@
             padding: 5px;
         }
 
+        .remove-from-cart{
+            background-color: #f3616d;
+            border-radius: 10px;
+            color: white;
+            text-align: -webkit-center;
+            padding: 5px;
+        }
+
+        .form-disabled {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #607080;
+            background-color: #e3e3e3;
+            background-clip: padding-box;
+            border: 1px solid #dce7f1;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.25rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+
+
     </style>
 </head>
 
@@ -124,7 +152,7 @@
                     <ul class="menu">
 
                         <li class="sidebar-item ">
-                            <a href="" class='sidebar-link'>
+                            <a href="{{route('produk')}}" class='sidebar-link'>
                                 <i class="bi bi-house-fill"></i>
                                 <span>
                                     PRODUK
@@ -156,7 +184,7 @@
                         </li> --}}
 
                         <li class="sidebar-item  ">
-                            <a href="" class='sidebar-link'>
+                            <a href="{{route('pesanan')}}" class='sidebar-link'>
                                 <i class="bi bi-credit-card-2-back-fill"></i>
                                 <span>
                                     PESANAN
