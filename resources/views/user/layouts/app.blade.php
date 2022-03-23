@@ -129,6 +129,14 @@
             text-align: -webkit-center;
         }
 
+        .foot-accordion{
+            background-color: #4fbe87;
+            text-align: center;
+            color: white;
+            padding: 8px;
+            border-radius: 10px;
+        }
+
 
 
     </style>

@@ -101,7 +101,7 @@
                     <div class="row">
                         <div class="col-12">
                             <b>Produk</b><br>
-                            <p>Pesanan Kamu</p>
+                            <p>Pesanan Anda</p>
                         </div>
                         <div class="col-12">
                             <div class="row">
@@ -179,7 +179,13 @@
                     </div>
                     <hr>
                     @endforeach
-
+                </div>
+                <div class="foot-accordion">
+                    <span id="text-pesan">Pesan</span>
+                    <div id="spinner" class="d-none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Processing...
+                    </div>
                 </div>
             </div>
         </div>
@@ -478,8 +484,45 @@
             });
         }
 
+        function checkoutProduct(){
+            $.ajax({
+                url: "{{route('checkoutProduct')}}",
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    Toastify({
+                        text: "Produk berhasil dipesan",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#4fbe87",
+                    }).showToast();
+                    $('#spinner').addClass('d-none')
+                    $('#text-pesan').removeClass('d-none')
+                }
+            });
+        }
+
         $('#input-search').on('input', function(){
             searchProduct()
         });
+
+        $('.foot-accordion').click(function(){
+            if($('#text-pesan').hasClass('d-none')){
+                $('#text-pesan').removeClass('d-none')
+            }else{
+                $('#text-pesan').addClass('d-none')
+            }
+
+            if($('#spinner').hasClass('d-none')){
+                $('#spinner').removeClass('d-none')
+            }else{
+                $('#spinner').addClass('d-none')
+            }
+            checkoutProduct()
+            getCart()
+            getStagingTotal()
+        })
     </script>
 @endsection

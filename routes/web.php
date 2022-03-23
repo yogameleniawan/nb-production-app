@@ -26,6 +26,7 @@ Route::get('/csrf', function () {
 
 
 Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
+Route::get('/checkoutProduct', [HomeController::class, 'checkoutProduct'])->name('checkoutProduct');
 Route::post('/getProductSearch', [HomeController::class, 'getProductSearch'])->name('getProductSearch');
 Route::get('/pesanan', [HomeController::class, 'pesanan'])->name('pesanan');
 Route::get('/getStagingCart', [HomeController::class, 'getStagingCart'])->name('getStagingCart');

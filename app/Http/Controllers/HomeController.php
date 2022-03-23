@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,7 @@ class HomeController extends Controller
 
     public function storeCart(Request $request)
     {
-        $cart = Cart::where('product_id', $request->product_id)->count();
+        $cart = Cart::where('product_id', $request->product_id)->where('status', 'staging')->count();
 
         if ($cart == 1) {
             $table = Cart::where('product_id', $request->product_id)->first();
@@ -96,5 +97,15 @@ class HomeController extends Controller
     {
         $data = Product::where('name', 'LIKE', "%$request->keyword%")->get();
         return response()->json(['data' => $data], 200);
+    }
+
+    public function checkoutProduct()
+    {
+        $transaction = new Transaction();
+        $transaction->save();
+        $affectedRows = Cart::where('status', 'staging')->update(array('status' => 'checkout', 'transaction_id' => $transaction->id));
+        if ($affectedRows) {
+            return response()->json(['data' => $affectedRows], 200);
+        }
     }
 }
