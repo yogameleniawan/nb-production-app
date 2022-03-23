@@ -276,7 +276,6 @@
                 type: "GET",
                 dataType: "json",
                 success:function(data) {
-                    console.log(data)
                     $('#total-payment').html(number_format(data.product_pay,0))
                     $('#total-product').html(number_format(data.product_total,0))
                 }
