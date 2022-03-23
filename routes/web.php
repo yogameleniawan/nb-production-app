@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/csrf', function () {
     return csrf_token();
@@ -27,6 +24,10 @@ Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/', function () {
+        // return view('welcome');
+        return view('dashboard');
+    });
     Route::get('/toko', [HomeController::class, 'produk'])->name('produk');
     Route::get('/checkoutProduct', [HomeController::class, 'checkoutProduct'])->name('checkoutProduct');
     Route::post('/getProductSearch', [HomeController::class, 'getProductSearch'])->name('getProductSearch');
@@ -44,3 +45,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::fallback(function () {
+    return view('auth.register');
+});
