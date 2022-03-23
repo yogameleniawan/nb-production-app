@@ -210,7 +210,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <p><b>Rp. <span id="item-price">{{ number_format($item->price, 2) }}</span></b></p>
+                                <p><b>Rp. <span id="item-price">{{ number_format($item->price, 0) }}</span></b></p>
                             </div>
                         </div>
                         <div class="row">
@@ -220,7 +220,7 @@
                                     <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                     Processing...
                                 </div>
-                                <b class="d-block" id="btn-pesan{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-fill"></i> Pesan</b>
+                                <b class="d-block" id="btn-pesan{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-fill"></i> Keranjang</b>
                                 {{-- <b class="d-none" id="btn-batal{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-dash-fill"></i> Batal</b> --}}
                             </div>
                             <div class="col-4">
@@ -291,14 +291,16 @@
                 },
                 statusCode: {
                         500: function (response) {
-                            $.toast({
-                                heading: 'Gagal',
-                                text: 'Gagal menambahkan ke keranjang',
-                                showHideTransition: 'slide',
-                                icon: 'error',
-                                loaderBg: '#f2a654',
-                                position: 'bottom-left'
-                            });
+                            Toastify({
+                                text: "Gagal menambahkan ke keranjang, isi total produk yang dibeli",
+                                duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "center",
+                                backgroundColor: "#f3616d",
+                            }).showToast();
+                            $('#spinner'+product_id).addClass('d-none')
+                            $('#btn-pesan'+product_id).removeClass('d-none')
                         },
                 },
                 success:function(data) {
@@ -314,6 +316,9 @@
                     getStagingTotal()
                     $('#spinner'+product_id).addClass('d-none')
                     $('#btn-pesan'+product_id).removeClass('d-none')
+
+                    $('#input-search').val('')
+                    searchProduct()
                 }
             });
         }
@@ -415,7 +420,7 @@
             }
         }
 
-        $('#input-search').on('input', function(){
+        function searchProduct(){
             $.ajax({
                 url: "{{route('getProductSearch')}}",
                 type: "POST",
@@ -427,8 +432,6 @@
                     'keyword': $('#input-search').val(),
                 },
                 success:function(data) {
-                    console.log(data)
-                    console.log($('#input-search').val())
                     var html = ""
                     data.data.forEach(item => {
                         html += '<div class="row">'+
@@ -455,7 +458,7 @@
                         '                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
                         '                                    Processing...'+
                         '                                </div>'+
-                        '                                <b class="d-block" id="btn-pesan'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-fill"></i> Pesan</b>'+
+                        '                                <b class="d-block" id="btn-pesan'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-fill"></i> Keranjang</b>'+
                         '                                {{-- <b class="d-none" id="btn-batal'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-dash-fill"></i> Batal</b> --}}'+
                         '                            </div>'+
                         '                            <div class="col-4">'+
@@ -473,6 +476,10 @@
                     $('#product-content').html(html)
                 }
             });
+        }
+
+        $('#input-search').on('input', function(){
+            searchProduct()
         });
     </script>
 @endsection
