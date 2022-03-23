@@ -18,9 +18,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/csrf', function () {
+    return csrf_token();
+});
+
+
+
 
 Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
 Route::get('/pesanan', [HomeController::class, 'pesanan'])->name('pesanan');
+Route::get('/getStagingCart', [HomeController::class, 'getStagingCart'])->name('getStagingCart');
+Route::post('/store_cart', [HomeController::class, 'storeCart'])->name('store_cart');
+Route::post('/remove_cart', [HomeController::class, 'removeCart'])->name('remove_cart');
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');

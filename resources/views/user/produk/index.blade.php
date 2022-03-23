@@ -191,12 +191,15 @@
         var temp_val = 0;
         function onPesan(price,id,name){
 
-            var a = $('#total-product').html()
+            var total_product = $('#total-product').html()
             var total_final = 0
+            var total_payment = 0
 
+            var total = []
 
             if($('#btn-pesan'+id).hasClass('d-none')){
-                total_final = +a - +$('#total'+id).val();
+                total_final = +total_product - +$('#total'+id).val();
+
                 $('#total'+id).val(0)
                 $('#total'+id).removeClass('form-disabled');
                 $('#total'+id).prop('disabled', false);
@@ -205,6 +208,103 @@
                 $('#parent-btn'+id).removeClass('remove-from-cart')
                 $('#parent-btn'+id).addClass('add-to-cart')
 
+                removeStaging(id,name)
+            }else{
+                total_final = +total_product + +$('#total'+id).val();
+                total_payment = price * total_final
+
+                $('#btn-batal'+id).removeClass('d-none')
+                $('#btn-pesan'+id).addClass('d-none')
+                $('#parent-btn'+id).addClass('remove-from-cart')
+                $('#parent-btn'+id).removeClass('add-to-cart')
+                $('#total'+id).prop('disabled', true);
+                $('#total'+id).addClass('form-disabled');
+
+                addStaging($('#total'+id).val(),id,name)
+            }
+            getStaging()
+
+        }
+
+        function onClickValue(id){
+            temp_val = $('#total'+id).val()
+        }
+
+        function getStaging(){
+            $.ajax({
+                url: "{{route('getStagingCart')}}",
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $('#total-payment').html(data.product_pay)
+                    $('#total-product').html(data.product_total)
+                }
+            });
+        }
+
+        function addStaging(product_total, product_id, name){
+            $.ajax({
+                url: "{{route('store_cart')}}",
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'product_total': product_total,
+                    'product_id': product_id,
+                },
+                statusCode: {
+                        500: function (response) {
+                            $.toast({
+                                heading: 'Gagal',
+                                text: 'Gagal menambahkan ke keranjang',
+                                showHideTransition: 'slide',
+                                icon: 'error',
+                                loaderBg: '#f2a654',
+                                position: 'bottom-left'
+                            });
+                        },
+                },
+                success:function(data) {
+                    Toastify({
+                        text: "Produk "+name+" berhasil ditambahkan",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#4fbe87",
+                    }).showToast();
+                }
+            });
+        }
+
+        function removeStaging(product_id, name){
+            console.log(product_id)
+            $.ajax({
+                url: "{{route('remove_cart')}}",
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'product_id': product_id,
+                },
+                statusCode: {
+                        500: function (response) {
+                            console.log(response)
+                            Toastify({
+                                text: "Response: " + response,
+                                duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "center",
+                                backgroundColor: "#f3616d",
+                            }).showToast();
+                        },
+                },
+                success:function(data) {
                     Toastify({
                         text: "Produk "+name+" berhasil dibatalkan",
                         duration: 3000,
@@ -213,31 +313,8 @@
                         position: "center",
                         backgroundColor: "#f3616d",
                     }).showToast();
-            }else{
-                total_final = +a + +$('#total'+id).val();
-                $('#btn-batal'+id).removeClass('d-none')
-                $('#btn-pesan'+id).addClass('d-none')
-                $('#parent-btn'+id).addClass('remove-from-cart')
-                $('#parent-btn'+id).removeClass('add-to-cart')
-                $('#total'+id).prop('disabled', true);
-                $('#total'+id).addClass('form-disabled');
-                Toastify({
-                        text: "Produk "+name+" berhasil ditambahkan",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#4fbe87",
-                    }).showToast();
-            }
-
-
-            $('#total-product').html(total_final)
-
-        }
-
-        function onClickValue(id){
-            temp_val = $('#total'+id).val()
+                }
+            });
         }
     </script>
 @endsection

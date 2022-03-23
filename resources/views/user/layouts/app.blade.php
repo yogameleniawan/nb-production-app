@@ -22,13 +22,9 @@
     <link rel="shortcut icon" href="{{ url('mazer/assets/images/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url('mazer/assets/vendors/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="{{ url('catalog/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url('css/ppdb.css') }}">
     <link rel="stylesheet" href="{{ url('mazer/assets/vendors/summernote/summernote-lite.min.css') }}">
     <link rel="stylesheet" href="{{ url('mazer/assets/vendors/toastify/toastify.css') }}">
-    <link rel="stylesheet" href="{{ url('catalog/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url('catalog/css/mobile-view.css') }}">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     {{-- <link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"> --}}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
     {{-- <link rel="stylesheet" type="text/css"  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"> --}}
