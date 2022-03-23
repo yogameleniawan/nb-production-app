@@ -125,6 +125,10 @@
             transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
 
+        .delete-button{
+            text-align: -webkit-center;
+        }
+
 
 
     </style>

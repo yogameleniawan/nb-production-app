@@ -65,12 +65,20 @@ class HomeController extends Controller
 
     public function storeCart(Request $request)
     {
-        $table = new Cart();
-        $table->product_total = $request->product_total;
-        $table->status = 'staging';
-        $table->user_id = 1;
-        $table->product_id = $request->product_id;
-        $table->save();
+        $cart = Cart::where('product_id', $request->product_id)->count();
+
+        if ($cart == 1) {
+            $table = Cart::where('product_id', $request->product_id)->first();
+            $table->product_total = $table->product_total + $request->product_total;
+            $table->save();
+        } else {
+            $table = new Cart();
+            $table->product_total = $request->product_total;
+            $table->status = 'staging';
+            $table->user_id = 1;
+            $table->product_id = $request->product_id;
+            $table->save();
+        }
 
         return response()->json($table, 200);
     }

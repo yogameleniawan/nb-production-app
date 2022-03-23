@@ -164,7 +164,7 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="row">
+                            <div class="row delete-button">
                                 <div class="col-12">
                                     <div id="parent-btn{{$item->id}}" class="col-8 remove-from-cart">
                                         <div id="spinner-delete{{$item->id}}" class="d-none">
@@ -252,7 +252,7 @@
 
 
             addStaging($('#total'+id).val(),id,name)
-            $('#total'+id).val(0)
+            $('#total'+id).val('')
             $('#spinner'+id).removeClass('d-none')
             $('#btn-pesan'+id).addClass('d-none')
             getStagingTotal()
@@ -382,7 +382,7 @@
                                 +"</div>"
                             +"</div>"
                         +"<div class='col-4'>"
-                            +"<div class='row'>"
+                            +"<div class='row delete-button'>"
                                 +"<div class='col-12'>"
                                     +"<div id='parent-btn"+item.id+"' class='col-8 remove-from-cart'>"
                                     +"<div id='spinner-delete"+item.id+"' class='d-none'>"
