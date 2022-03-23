@@ -187,12 +187,13 @@
 </div>
 
 <div class="form-group position-relative has-icon-right">
-    <input type="text" class="form-control" placeholder="Cari Produk ... ">
+    <input id="input-search" type="text" class="form-control" placeholder="Cari Produk ... ">
     <div class="form-control-icon">
         <i class="bi bi-search"></i>
     </div>
 </div>
 
+<div id="product-content">
 @foreach ($products as $item)
 
 <div class="row">
@@ -234,7 +235,7 @@
 </div>
 
 @endforeach
-
+</div>
 @endsection
 @section('script')
     <script>
@@ -413,5 +414,65 @@
                 $('#icon-accordion').addClass('bi-caret-down-square-fill')
             }
         }
+
+        $('#input-search').on('input', function(){
+            $.ajax({
+                url: "{{route('getProductSearch')}}",
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'keyword': $('#input-search').val(),
+                },
+                success:function(data) {
+                    console.log(data)
+                    console.log($('#input-search').val())
+                    var html = ""
+                    data.data.forEach(item => {
+                        html += '<div class="row">'+
+                        '    <div class="col-12 col-md-12 col-lg-12">'+
+                        '        <div class="card">'+
+                        '            <div class="card-body">'+
+                        '                <div class="row">'+
+                        '                    <div class="col-4"><img src="{{url('img/martabak.jpg')}}" class="img-product"/></div>'+
+                        '                    <div class="col-8">'+
+                        '                        <div class="row">'+
+                        '                            <div class="col-12">'+
+                        '                                <small>'+item.name+'</small>'+
+                        '                            </div>'+
+                        '                        </div>'+
+                        '                        <div class="row">'+
+                        '                            <div class="col-12">'+
+                        '                                <p><b>Rp. <span id="item-price">'+ number_format(item.price, 0) +'</span></b></p>'+
+                        '                            </div>'+
+                        '                        </div>'+
+                        '                        <div class="row">'+
+                        ''+
+                        '                            <div id="parent-btn'+item.id+'" class="col-8 add-to-cart">'+
+                        '                                <div id="spinner'+item.id+'" class="d-none">'+
+                        '                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
+                        '                                    Processing...'+
+                        '                                </div>'+
+                        '                                <b class="d-block" id="btn-pesan'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-fill"></i> Pesan</b>'+
+                        '                                {{-- <b class="d-none" id="btn-batal'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-dash-fill"></i> Batal</b> --}}'+
+                        '                            </div>'+
+                        '                            <div class="col-4">'+
+                        '                                <input type="number" onclick="onClickValue('+item.id+')" class="form-control-total" placeholder="0" id="total'+item.id+'">'+
+                        '                            </div>'+
+                        '                        </div>'+
+                        '                    </div>'+
+                        '                </div>'+
+                        '            </div>'+
+                        '        </div>'+
+                        '    </div>'+
+                        '</div>'
+
+                    });
+                    $('#product-content').html(html)
+                }
+            });
+        });
     </script>
 @endsection

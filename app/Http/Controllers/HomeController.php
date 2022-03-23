@@ -91,4 +91,10 @@ class HomeController extends Controller
 
         return response()->json($table, 200);
     }
+
+    public function getProductSearch(Request $request)
+    {
+        $data = Product::where('name', 'LIKE', "%$request->keyword%")->get();
+        return response()->json(['data' => $data], 200);
+    }
 }
