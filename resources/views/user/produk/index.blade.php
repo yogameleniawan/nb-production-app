@@ -109,7 +109,7 @@
                                     <p><i class="bi bi-cart-fill" style="color: #4fbe87;"></i>  Total</p>
                                 </div>
                                 <div class="col-5">
-                                    <p id="total-product" class="total-product">0</p>
+                                    <p id="total-product" class="total-product">{{$product_total}}</p>
                                 </div>
                             </div>
                         </div>
@@ -128,7 +128,7 @@
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-12">
-                                    <p> <i class="bi bi-credit-card-fill" style="color: #435ebe;margin-right: 10px;"></i> Rp. <span id="total-payment">0</span></p>
+                                    <p> <i class="bi bi-credit-card-fill" style="color: #435ebe;margin-right: 10px;"></i> Rp. <span id="total-payment">{{number_format($product_pay,0)}}</span></p>
                                 </div>
                             </div>
                         </div>
@@ -138,16 +138,61 @@
         </div>
     </div>
 
+@endsection
+@section('content')
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="header-accordion">
+                    <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Pesanan Anda </p>
+                </div>
+                <div class="body-accordion">
+                    @foreach ($cart_users as $item)
+                    <div class="row">
+                        <div class="col-3"><img src="{{url('img/martabak.jpg')}}" style="width: 90%"/></div>
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <small>{{$item->name}}</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <p><b>Rp. <span id="item-price">{{ number_format($item->price, 0) }} x {{$item->product_total}}</span></b></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div id="parent-btn{{$item->id}}" class="col-8 remove-from-cart">
+                                        <div id="spinner-delete{{$item->id}}" class="d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            Deleting
+                                        </div>
+                                        <b id="btn-batal{{$item->id}}" onclick="removeStaging({{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-dash-fill"></i> Batal</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    @endforeach
 
-<div class="form-group position-relative has-icon-right m-3">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group position-relative has-icon-right">
     <input type="text" class="form-control" placeholder="Cari Produk ... ">
     <div class="form-control-icon">
         <i class="bi bi-search"></i>
     </div>
 </div>
 
-@endsection
-@section('content')
 @foreach ($products as $item)
 
 <div class="row">
@@ -155,7 +200,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4"><img src="{{$item->image}}" class="img-product"/></div>
+                    <div class="col-4"><img src="{{url('img/martabak.jpg')}}" class="img-product"/></div>
                     <div class="col-8">
                         <div class="row">
                             <div class="col-12">
@@ -168,9 +213,14 @@
                             </div>
                         </div>
                         <div class="row">
+
                             <div id="parent-btn{{$item->id}}" class="col-8 add-to-cart">
+                                <div id="spinner{{$item->id}}" class="d-none">
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    Processing...
+                                </div>
                                 <b class="d-block" id="btn-pesan{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-fill"></i> Pesan</b>
-                                <b class="d-none" id="btn-batal{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-dash-fill"></i> Batal</b>
+                                {{-- <b class="d-none" id="btn-batal{{$item->id}}" onclick="onPesan({{$item->price}}, {{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-dash-fill"></i> Batal</b> --}}
                             </div>
                             <div class="col-4">
                                 <input type="number" onclick="onClickValue({{$item->id}})" class="form-control-total" placeholder="0" id="total{{$item->id}}">
@@ -197,32 +247,15 @@
 
             var total = []
 
-            if($('#btn-pesan'+id).hasClass('d-none')){
-                total_final = +total_product - +$('#total'+id).val();
+            total_final = +total_product + +$('#total'+id).val();
+            total_payment = price * total_final
 
-                $('#total'+id).val(0)
-                $('#total'+id).removeClass('form-disabled');
-                $('#total'+id).prop('disabled', false);
-                $('#btn-batal'+id).addClass('d-none')
-                $('#btn-pesan'+id).removeClass('d-none')
-                $('#parent-btn'+id).removeClass('remove-from-cart')
-                $('#parent-btn'+id).addClass('add-to-cart')
 
-                removeStaging(id,name)
-            }else{
-                total_final = +total_product + +$('#total'+id).val();
-                total_payment = price * total_final
-
-                $('#btn-batal'+id).removeClass('d-none')
-                $('#btn-pesan'+id).addClass('d-none')
-                $('#parent-btn'+id).addClass('remove-from-cart')
-                $('#parent-btn'+id).removeClass('add-to-cart')
-                $('#total'+id).prop('disabled', true);
-                $('#total'+id).addClass('form-disabled');
-
-                addStaging($('#total'+id).val(),id,name)
-            }
-            getStaging()
+            addStaging($('#total'+id).val(),id,name)
+            $('#total'+id).val(0)
+            $('#spinner'+id).removeClass('d-none')
+            $('#btn-pesan'+id).addClass('d-none')
+            getStagingTotal()
 
         }
 
@@ -230,14 +263,15 @@
             temp_val = $('#total'+id).val()
         }
 
-        function getStaging(){
+        function getStagingTotal(){
             $.ajax({
                 url: "{{route('getStagingCart')}}",
                 type: "GET",
                 dataType: "json",
                 success:function(data) {
-                    $('#total-payment').html(data.product_pay)
-                    $('#total-product').html(data.product_total)
+                    console.log(data)
+                    $('#total-payment').html(number_format(data.product_pay,0))
+                    $('#total-product').html(number_format(data.product_total,0))
                 }
             });
         }
@@ -275,12 +309,17 @@
                         position: "center",
                         backgroundColor: "#4fbe87",
                     }).showToast();
+                    getCart()
+                    getStagingTotal()
+                    $('#spinner'+product_id).addClass('d-none')
+                    $('#btn-pesan'+product_id).removeClass('d-none')
                 }
             });
         }
 
         function removeStaging(product_id, name){
-            console.log(product_id)
+            $('#spinner-delete'+product_id).removeClass('d-none')
+            $('#btn-batal'+product_id).addClass('d-none')
             $.ajax({
                 url: "{{route('remove_cart')}}",
                 type: "POST",
@@ -293,7 +332,6 @@
                 },
                 statusCode: {
                         500: function (response) {
-                            console.log(response)
                             Toastify({
                                 text: "Response: " + response,
                                 duration: 3000,
@@ -313,8 +351,67 @@
                         position: "center",
                         backgroundColor: "#f3616d",
                     }).showToast();
+                    getCart()
+                    getStagingTotal()
+                    $('#spinner-delete'+product_id).addClass('d-none')
+                    $('#btn-batal'+product_id).removeClass('d-none')
                 }
             });
+        }
+
+        function getCart(){
+            $.ajax({
+                url: "{{route('getCart')}}",
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    var html = ""
+                    data.data.forEach(item => {
+                        html += "<div class='row'>"
+                        +"<div class='col-3'><img src='{{url('img/martabak.jpg')}}' style='width: 90%'/></div>"
+                        +"<div class='col-5'>"
+                            +"<div class='row'>"
+                                +"<div class='col-12'>"
+                                    +"<small>"+item.name+"</small>"
+                                +"</div>"
+                            +"</div>"
+                            +"<div class='row'>"
+                                    +"<div class='col-12'>"
+                                        +"<p><b>Rp. <span id='item-price'>"+ number_format(item.price, 0) + " x " + item.product_total +"</span></b></p>"
+                                    +"</div>"
+                                +"</div>"
+                            +"</div>"
+                        +"<div class='col-4'>"
+                            +"<div class='row'>"
+                                +"<div class='col-12'>"
+                                    +"<div id='parent-btn"+item.id+"' class='col-8 remove-from-cart'>"
+                                    +"<div id='spinner-delete"+item.id+"' class='d-none'>"
+                                    +"<span class='spinner-grow spinner-grow-sm' role='status' aria-hidden='true'></span>"
+                                    +"Deleting"
+                                    +"</div>"
+                                    +"<b id='btn-batal"+item.id+"' onclick='removeStaging("+item.id+", \""+item.name+"\")'><i class='bi bi-cart-dash-fill'></i> Batal</b>"
+                                    +"</div>"
+                               +"</div>"
+                            +"</div>"
+                        +"</div>"
+                    +"</div>"
+                    +"<hr>"
+                    });
+                    $('.body-accordion').html(html)
+                }
+            });
+        }
+
+        function openAccordion(){
+            if($('.body-accordion').hasClass('d-none')){
+                $('#icon-accordion').removeClass('bi-caret-down-square-fill')
+                $('#icon-accordion').addClass('bi-caret-up-square-fill')
+                $('.body-accordion').removeClass('d-none')
+            }else{
+                $('.body-accordion').addClass('d-none')
+                $('#icon-accordion').removeClass('bi-caret-up-square-fill')
+                $('#icon-accordion').addClass('bi-caret-down-square-fill')
+            }
         }
     </script>
 @endsection
