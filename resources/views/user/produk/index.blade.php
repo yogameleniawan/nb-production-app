@@ -91,9 +91,8 @@
 @section('page-heading')
     <div class="col-12 img-container">
         <img src="{{url('img/banner.jpeg')}}" class="banner-img">
-        <div class="centered">Selamat datang, <br> <small style="font-size:20px">User!</small></div>
+        <div class="centered">Selamat datang, <br> <small style="font-size:20px">{{Auth::user()->name}}!</small></div>
     </div>
-
     <div class="row-card card-position" >
         <div class="col-6">
             <div class="card-head">

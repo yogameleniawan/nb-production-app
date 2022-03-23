@@ -23,11 +23,11 @@ Route::get('/csrf', function () {
     return csrf_token();
 });
 
-Route::middleware(['auth:sanctum', 'verified', 'can:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
+    Route::get('/toko', [HomeController::class, 'produk'])->name('produk');
     Route::get('/checkoutProduct', [HomeController::class, 'checkoutProduct'])->name('checkoutProduct');
     Route::post('/getProductSearch', [HomeController::class, 'getProductSearch'])->name('getProductSearch');
     Route::get('/pesanan', [HomeController::class, 'pesanan'])->name('pesanan');
