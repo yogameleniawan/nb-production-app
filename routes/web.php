@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\StoreController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Seller\CartController;
+use App\Http\Controllers\Seller\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -15,19 +19,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('/csrf', function () {
-    return csrf_token();
+Route::get('/', function () {
+    // return view('welcome');
+    return view('auth.register');
 });
+
+// Route::get('/csrf', function () {
+//     return csrf_token();
+// });
 
 Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function () {
+    Route::resources([
+        'produk-toko' => ProductController::class,
+        'transaksi' => CartController::class
+    ]);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/', function () {
-        // return view('welcome');
-        return view('dashboard');
-    });
+Route::middleware(['auth:sanctum', 'verified', 'can:admin'])->group(function () {
+    Route::resources([
+        'store' => StoreController::class,
+        'user' => UserController::class
+    ]);
+});
+
+Route::middleware(['auth:sanctum', 'verified', 'can:user'])->group(function () {
     Route::get('/toko', [HomeController::class, 'produk'])->name('produk');
     Route::get('/checkoutProduct', [HomeController::class, 'checkoutProduct'])->name('checkoutProduct');
     Route::post('/getProductSearch', [HomeController::class, 'getProductSearch'])->name('getProductSearch');

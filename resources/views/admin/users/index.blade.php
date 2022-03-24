@@ -93,90 +93,125 @@
         <img src="{{url('img/banner.jpeg')}}" class="banner-img">
         <div class="centered">Selamat datang, <br> <small style="font-size:20px">{{Auth::user()->name}}!</small></div>
     </div>
-    <div class="row-card card-position" >
-        <div class="col-6">
-            <div class="card-head">
-                <div class="card-body-head">
-                    <div class="row">
-                        <div class="col-12">
-                            <b>Produk</b><br>
-                            <p>Pesanan Anda</p>
-                        </div>
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-6">
-                                    <p><i class="bi bi-cart-fill" style="color: #4fbe87;"></i>  Total</p>
-                                </div>
-                                <div class="col-5">
-                                    <p id="total-product" class="total-product">{{$product_total}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card-head">
-                <div class="card-body-head">
-                    <div class="row">
-                        <div class="col-12">
-                            <b>Produk</b><br>
-                            <p>Total bayar</p>
-                        </div>
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-12">
-                                    <p> <i class="bi bi-credit-card-fill" style="color: #435ebe;margin-right: 10px;"></i> Rp. <span id="total-payment">{{number_format($product_pay,0)}}</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection
 @section('content')
 <div class="row">
     <div class="col-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="card-body">
-                <div class="header-accordion">
-                    <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Pesanan Anda </p>
-                </div>
-                <div class="body-accordion">
-                    @foreach ($cart_users as $item)
+                <form action="{{route('user.store')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="row">
-                        <div class="col-3"><img src="{{url('img/martabak.jpg')}}" style="width: 90%"/></div>
-                        <div class="col-5">
-                            <div class="row">
-                                <div class="col-12">
-                                    <small>{{$item->name}}</small>
-                                </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="name">Nama</label>
+                                <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <p><b>Rp. <span id="item-price">{{ number_format($item->price, 0) }} x {{$item->product_total}}</span></b></p>
-                                </div>
+
+                            <div class="form-group">
+                                <label for="helpInputTop">Email</label>
+                                <small class="text-muted">eg.<i>someone@example.com</i></small>
+                                <input type="email" class="form-control" id="helpInputTop" name="email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Tambah Seller</button>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="row delete-button">
-                                <div class="col-12">
-                                    <div id="parent-btn{{$item->id}}" class="col-8 remove-from-cart">
-                                        <div id="spinner-delete{{$item->id}}" class="d-none">
-                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                            Deleting
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="header-accordion">
+                    <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Data Seller </p>
+                </div>
+                <div class="body-accordion">
+                    @foreach ($users as $item)
+
+                    <div id="show-item">
+                        <div class="row" style="align-items: center;">
+                            <div class="col-8">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <span>{{$item->email}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="row delete-button">
+                                    <div class="col-12">
+                                        <div id="parent-btn-update" class="col-8 mb-2 add-to-cart">
+                                            <div id="spinner-update" class="d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                                Updating
+                                            </div>
+                                            <b id="btn-update" onclick=""><i class="bi bi-pencil-fill"></i> Edit</b>
                                         </div>
-                                        <b id="btn-batal{{$item->id}}" onclick="removeStaging({{$item->id}}, '{{$item->name}}')"><i class="bi bi-cart-dash-fill"></i> Batal</b>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <hr>
                     </div>
-                    <hr>
+
+                    <div id="edit-form" class="d-none">
+                        <div class="row" style="align-items: center;">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="email_form">Email</label>
+                                        <input type="email" class="form-control" id="email_form" value="{{$item->email}}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="password_form">Password</label>
+                                        <input type="password" class="form-control" id="password_form" placeholder="*******">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="col-12">
+                                <div class="row delete-button">
+                                    <div class="col-12">
+                                        <div id="parent-btn-update" class="col-8 mb-2 add-to-cart">
+                                            <div id="spinner-update" class="d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                                Updating
+                                            </div>
+                                            <b id="btn-update" onclick=""><i class="bi bi-pencil-fill"></i> Update</b>
+                                        </div>
+
+                                        <div id="parent-btn-cancel" class="col-8 remove-from-cart">
+                                            <div id="spinner-cancel" class="d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                                Deleting
+                                            </div>
+                                            <b id="btn-batal" onclick=""><i class="bi bi-x-square-fill"></i> Batal</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+
                     @endforeach
                 </div>
             </div>

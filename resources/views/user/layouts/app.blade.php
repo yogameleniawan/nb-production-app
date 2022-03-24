@@ -158,15 +158,44 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
+                        @can('admin')
+                        <li class="sidebar-item ">
+                            <a href="{{route('user.index')}}" class='sidebar-link'>
+                                <i class="bi bi-person-fill"></i>
+                                <span>
+                                    Data Seller
+                                </span>
+                            </a>
+                        </li>
 
                         <li class="sidebar-item ">
-                            <a href="{{route('produk')}}" class='sidebar-link'>
+                            <a href="{{route('store.index')}}" class='sidebar-link'>
                                 <i class="bi bi-house-fill"></i>
+                                <span>
+                                    Data Toko
+                                </span>
+                            </a>
+                        </li>
+                        @endcan
+
+                        @can('user')
+                        <li class="sidebar-item ">
+                            <a href="{{url('/toko?name=')}}{{app('request')->input('name')}}" class='sidebar-link'>
+                                <i class="bi bi-hdd-stack-fill"></i>
                                 <span>
                                     PRODUK
                                 </span>
                             </a>
                         </li>
+                        <li class="sidebar-item  ">
+                            <a href="{{url('/pesanan?name=')}}{{app('request')->input('name')}}" class='sidebar-link'>
+                                <i class="bi bi-cart-fill"></i>
+                                <span>
+                                    PESANAN
+                                </span>
+                            </a>
+                        </li>
+                        @endcan
                         {{-- <li
                             class="sidebar-item has-sub {{ Route::is('program.create') || Route::is('program.index') || Route::is('history.index') ? 'active' : '' }}">
                             <a href="javascript:void(0);" class='sidebar-link'>
@@ -191,14 +220,6 @@
                             </ul>
                         </li> --}}
 
-                        <li class="sidebar-item  ">
-                            <a href="{{route('pesanan')}}" class='sidebar-link'>
-                                <i class="bi bi-credit-card-2-back-fill"></i>
-                                <span>
-                                    PESANAN
-                                </span>
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
@@ -249,11 +270,6 @@
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <h6 class="dropdown-header">Halo,
-
-                                        </h6>
-                                    </li>
 
                                     <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();" role="button">
