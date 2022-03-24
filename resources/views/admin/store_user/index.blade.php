@@ -99,19 +99,27 @@
     <div class="col-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form id="form-store" action="{{route('store.store')}}" method="POST" enctype="multipart/form-data">
+                <form id="form-store-user" action="{{route('seller-toko.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
 
                             <div class="form-group">
-                                <label for="name">Nama</label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                <label for="name">Seller</label>
+                                <select class="form-select" id="user_id" name="user_id">
+                                    @foreach ($users as $item)
+                                    <option value="{{$item->id}}">{{$item->name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="form-group">
-                                <label for="helpInputTop">Alamat</label>
-                                <input id="address" type="text" class="form-control" name="address">
+                                <label for="helpInputTop">Toko</label>
+                                <select class="form-select" id="store_id" name="store_id">
+                                    @foreach ($stores as $item)
+                                    <option value="{{$item->id}}">{{$item->name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -119,7 +127,7 @@
                                     <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                     Processing..
                                 </div>
-                                <a id="btn-tambah" onclick="doStore()" class="btn btn-primary">Tambah Toko</a>
+                                <a id="btn-tambah" onclick="doStore()" class="btn btn-primary">Tambah/Update Seller Toko</a>
                             </div>
                         </div>
                     </div>
@@ -135,24 +143,25 @@
         <div class="card">
             <div class="card-body">
                 <div class="header-accordion">
-                    <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Data Toko </p>
+                    <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Data Seller Toko </p>
                 </div>
                 <div class="body-accordion">
-                    @foreach ($stores as $item)
+                    @foreach ($data as $item)
 
                     <div id="show-item{{$item->id}}">
                         <div class="row" style="align-items: center;">
                             <div class="col-7">
                                 <div class="row">
                                     <div class="col-12">
-                                        <span>{{$item->name}}</span>
+                                        <span>Toko : {{$item->store_name}}</span><br>
+                                        <span>Pemilik : {{$item->user_name}}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-5">
                                 <div class="row delete-button">
-                                    <div class="col-12">
+                                    {{-- <div class="col-12">
                                         <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">
                                             <div id="spinner-edit" class="d-none">
                                                 <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -160,7 +169,7 @@
                                             </div>
                                             <b id="btn-edit{{$item->id}}" onclick="doEdit({{$item->id}})"><i class="bi bi-pencil-fill"></i> Edit</b>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-12">
                                         <div id="parent-btn-delete" class="col-8 mb-2 remove-from-cart">
                                             <div id="spinner-delete{{$item->id}}" class="d-none">
@@ -181,14 +190,14 @@
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="name_form">Nama</label>
-                                        <input type="email" class="form-control" id="name_form{{$item->id}}" value="{{$item->name}}">
+                                        <label for="name_form">Pemilik</label>
+                                        <input type="email" class="form-control" id="name_form{{$item->id}}" value="{{$item->user_name}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="address_form">Alamat</label>
-                                        <input type="text" class="form-control" id="address_form{{$item->id}}" value="{{$item->address}}">
+                                        <label for="store_form">Toko</label>
+                                        <input type="text" class="form-control" id="store_form{{$item->id}}" value="{{$item->store_name}}">
                                     </div>
                                 </div>
                             </div>
@@ -231,20 +240,21 @@
             $('#btn-tambah').addClass('d-none')
 
             $.ajax({
-                url: "{{route('store.store')}}",
+                url: "{{route('seller-toko.store')}}",
                 type: "POST",
                 dataType: "json",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    'name': $('#name').val(),
-                    'address': $('#address').val(),
+                    'user_id': $('#user_id').val(),
+                    'store_id': $('#store_id').val(),
                 },
                 statusCode: {
                         500: function (response) {
+                            console.log(response)
                             Toastify({
-                                text: "Gagal menambah toko",
+                                text: "Gagal menambah/memperbarui seller toko",
                                 duration: 3000,
                                 close: true,
                                 gravity: "top",
@@ -257,71 +267,17 @@
                 },
                 success:function(data) {
                     Toastify({
-                        text: "Berhasil menambah toko",
+                        text: "Berhasil menambah/memperbarui seller toko",
                         duration: 3000,
                         close: true,
                         gravity: "top",
                         position: "center",
                         backgroundColor: "#4fbe87",
                     }).showToast();
-                    $('#form-store').trigger("reset");
+                    $('#form-store-user').trigger("reset");
                     $('#spinner-tambah').addClass('d-none')
                     $('#btn-tambah').removeClass('d-none')
-                    fetchStore()
-                }
-            });
-        }
-
-        function doEdit(id){
-            $('#edit-form'+id).removeClass('d-none')
-            $('#show-item'+id).addClass('d-none')
-        }
-
-        function doUpdate(id){
-
-            $('#spinner-update'+id).removeClass('d-none')
-            $('#btn-update'+id).addClass('d-none')
-            $.ajax({
-                url: "{{route('store.update', 1)}}",
-                type: "PUT",
-                dataType: "json",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    'id': id,
-                    'name': $('#name_form'+id).val(),
-                    'address': $('#address_form'+id).val(),
-                },
-                statusCode: {
-                        500: function (response) {
-                            Toastify({
-                                text: "Gagal mengubah informasi toko",
-                                duration: 3000,
-                                close: true,
-                                gravity: "top",
-                                position: "center",
-                                backgroundColor: "#f3616d",
-                            }).showToast();
-                            $('#spinner-update'+id).addClass('d-none')
-                            $('#btn-update'+id).removeClass('d-none')
-                        },
-                },
-                success:function(data) {
-                    Toastify({
-                        text: "Berhasil mengubah informasi toko",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#4fbe87",
-                    }).showToast();
-                    $('#spinner-update'+id).addClass('d-none')
-                    $('#btn-update'+id).removeClass('d-none')
-
-                    $('#edit-form'+id).addClass('d-none')
-                    $('#show-item'+id).removeClass('d-none')
-                    fetchStore()
+                    fetchSellerStore()
                 }
             });
         }
@@ -331,7 +287,7 @@
             $('#spinner-delete'+id).removeClass('d-none')
             $('#btn-delete'+id).addClass('d-none')
             $.ajax({
-                url: "{{route('store.destroy', 1)}}",
+                url: "{{route('seller-toko.destroy', 1)}}",
                 type: "DELETE",
                 dataType: "json",
                 headers: {
@@ -343,7 +299,7 @@
                 statusCode: {
                         500: function (response) {
                             Toastify({
-                                text: "Gagal menghapus toko",
+                                text: "Gagal menghapus seller toko",
                                 duration: 3000,
                                 close: true,
                                 gravity: "top",
@@ -356,7 +312,7 @@
                 },
                 success:function(data) {
                     Toastify({
-                        text: "Berhasil menghapus toko",
+                        text: "Berhasil menghapus seller toko",
                         duration: 3000,
                         close: true,
                         gravity: "top",
@@ -368,7 +324,7 @@
 
                     $('#edit-form'+id).addClass('d-none')
                     $('#show-item'+id).removeClass('d-none')
-                    fetchStore()
+                    fetchSellerStore()
                 }
             });
         }
@@ -390,13 +346,14 @@
             }
         }
 
-        function fetchStore(){
+        function fetchSellerStore(){
             $.ajax({
-                url: "{{route('fetchStore')}}",
+                url: "{{route('fetchSellerStore')}}",
                 type: "GET",
                 dataType: "json",
 
                 success:function(data) {
+                    console.log(data)
                     var html = ""
                     data.data.forEach(item => {
 
@@ -405,22 +362,14 @@
 '                            <div class="col-7">'+
 '                                <div class="row">'+
 '                                    <div class="col-12">'+
-'                                        <span>'+item.name+'</span>'+
+'                                        <span>Toko : '+item.store_name+'</span><br>'+
+'                                        <span>Pemilik : '+item.user_name+'</span>'+
 '                                    </div>'+
 '                                </div>'+
 '                            </div>'+
 ''+
 '                            <div class="col-5">'+
 '                                <div class="row delete-button">'+
-'                                    <div class="col-12">'+
-'                                        <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">'+
-'                                            <div id="spinner-edit" class="d-none">'+
-'                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
-'                                                Updating'+
-'                                            </div>'+
-'                                            <b id="btn-edit'+item.id+'" onclick="doEdit('+item.id+')"><i class="bi bi-pencil-fill"></i> Edit</b>'+
-'                                        </div>'+
-'                                    </div>'+
 '                                    <div class="col-12">'+
 '                                        <div id="parent-btn-delete" class="col-8 mb-2 remove-from-cart">'+
 '                                            <div id="spinner-delete'+item.id+'" class="d-none">'+
@@ -442,13 +391,13 @@
 '                                <div class="row">'+
 '                                    <div class="col-12">'+
 '                                        <label for="name_form">Nama</label>'+
-'                                        <input type="text" class="form-control" id="name_form'+item.id+'" value="'+item.name+'">'+
+'                                        <input type="text" class="form-control" id="name_form'+item.id+'" value="'+item.user_name+'">'+
 '                                    </div>'+
 '                                </div>'+
 '                                <div class="row">'+
 '                                    <div class="col-12">'+
-'                                        <label for="address_form">Alamat</label>'+
-'                                        <input type="text" class="form-control" id="address_form'+item.id+'" value="'+item.address+'">'+
+'                                        <label for="store_form">Alamat</label>'+
+'                                        <input type="text" class="form-control" id="store_form'+item.id+'" value="'+item.store_name+'">'+
 '                                    </div>'+
 '                                </div>'+
 '                            </div>'+

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\StoreController;
+use App\Http\Controllers\Admin\StoreSellerController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Seller\CartController;
@@ -38,10 +39,12 @@ Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function ()
 Route::middleware(['auth:sanctum', 'verified', 'can:admin'])->group(function () {
     Route::resources([
         'store' => StoreController::class,
-        'user' => UserController::class
+        'user' => UserController::class,
+        'seller-toko' => StoreSellerController::class,
     ]);
     Route::get('/fetchUser', [UserController::class, 'fetchUser'])->name('fetchUser');
     Route::get('/fetchStore', [StoreController::class, 'fetchStore'])->name('fetchStore');
+    Route::get('/fetchSellerStore', [StoreSellerController::class, 'fetchSellerStore'])->name('fetchSellerStore');
 });
 
 Route::middleware(['auth:sanctum', 'verified', 'can:user'])->group(function () {

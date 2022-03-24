@@ -176,6 +176,15 @@
                                 </span>
                             </a>
                         </li>
+
+                        <li class="sidebar-item ">
+                            <a href="{{route('seller-toko.index')}}" class='sidebar-link'>
+                                <i class="bi bi-briefcase-fill"></i>
+                                <span>
+                                    Data Toko Seller
+                                </span>
+                            </a>
+                        </li>
                         @endcan
 
                         @can('user')
