@@ -150,7 +150,7 @@
                     @foreach ($cart_users as $item)
                     <div class="row">
                         <div class="col-3"><img src="{{url('img/martabak.jpg')}}" style="width: 90%"/></div>
-                        <div class="col-5">
+                        <div class="col-9">
                             <div class="row">
                                 <div class="col-12">
                                     <small>{{$item->name}}</small>
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-4">
+                        {{-- <div class="col-4">
                             <div class="row delete-button">
                                 <div class="col-12">
                                     <div id="parent-btn{{$item->id}}" class="col-8 remove-from-cart">
@@ -174,7 +174,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <hr>
                     @endforeach

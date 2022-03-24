@@ -99,7 +99,7 @@
     <div class="col-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{route('user.store')}}" method="POST" enctype="multipart/form-data">
+                <form id="form-user" action="{{route('user.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
@@ -112,7 +112,7 @@
                             <div class="form-group">
                                 <label for="helpInputTop">Email</label>
                                 <small class="text-muted">eg.<i>someone@example.com</i></small>
-                                <input type="email" class="form-control" id="helpInputTop" name="email">
+                                <input id="email" type="email" class="form-control" name="email">
                             </div>
 
                             <div class="form-group">
@@ -121,7 +121,11 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Tambah Seller</button>
+                                <div id="spinner-tambah" class="d-none btn btn-primary">
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    Processing..
+                                </div>
+                                <a id="btn-tambah" onclick="doStore()" class="btn btn-primary">Tambah Seller</a>
                             </div>
                         </div>
                     </div>
@@ -142,7 +146,7 @@
                 <div class="body-accordion">
                     @foreach ($users as $item)
 
-                    <div id="show-item">
+                    <div id="show-item{{$item->id}}">
                         <div class="row" style="align-items: center;">
                             <div class="col-8">
                                 <div class="row">
@@ -155,12 +159,12 @@
                             <div class="col-4">
                                 <div class="row delete-button">
                                     <div class="col-12">
-                                        <div id="parent-btn-update" class="col-8 mb-2 add-to-cart">
-                                            <div id="spinner-update" class="d-none">
+                                        <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">
+                                            <div id="spinner-edit" class="d-none">
                                                 <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                                 Updating
                                             </div>
-                                            <b id="btn-update" onclick=""><i class="bi bi-pencil-fill"></i> Edit</b>
+                                            <b id="btn-edit{{$item->id}}" onclick="doEdit({{$item->id}})"><i class="bi bi-pencil-fill"></i> Edit</b>
                                         </div>
                                     </div>
                                 </div>
@@ -169,19 +173,19 @@
                         <hr>
                     </div>
 
-                    <div id="edit-form" class="d-none">
+                    <div id="edit-form{{$item->id}}" class="d-none">
                         <div class="row" style="align-items: center;">
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="email_form">Email</label>
-                                        <input type="email" class="form-control" id="email_form" value="{{$item->email}}">
+                                        <input type="email" class="form-control" id="email_form{{$item->id}}" value="{{$item->email}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="password_form">Password</label>
-                                        <input type="password" class="form-control" id="password_form" placeholder="*******">
+                                        <input type="password" class="form-control" id="password_form{{$item->id}}" placeholder="*******">
                                     </div>
                                 </div>
                             </div>
@@ -191,19 +195,15 @@
                                 <div class="row delete-button">
                                     <div class="col-12">
                                         <div id="parent-btn-update" class="col-8 mb-2 add-to-cart">
-                                            <div id="spinner-update" class="d-none">
+                                            <div id="spinner-update{{$item->id}}" class="d-none">
                                                 <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                                 Updating
                                             </div>
-                                            <b id="btn-update" onclick=""><i class="bi bi-pencil-fill"></i> Update</b>
+                                            <b id="btn-update{{$item->id}}" onclick="doUpdate({{$item->id}})"><i class="bi bi-pencil-fill"></i> Update</b>
                                         </div>
 
                                         <div id="parent-btn-cancel" class="col-8 remove-from-cart">
-                                            <div id="spinner-cancel" class="d-none">
-                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                                Deleting
-                                            </div>
-                                            <b id="btn-batal" onclick=""><i class="bi bi-x-square-fill"></i> Batal</b>
+                                            <b id="btn-batal" onclick="doCancel({{$item->id}})"><i class="bi bi-x-square-fill"></i> Batal</b>
                                         </div>
                                     </div>
                                 </div>
@@ -222,172 +222,111 @@
 @endsection
 @section('script')
     <script>
-        var temp_val = 0;
-        function onPesan(price,id,name){
+        function doStore(){
 
-            var total_product = $('#total-product').html()
-            var total_final = 0
-            var total_payment = 0
+            $('#spinner-tambah').removeClass('d-none')
+            $('#btn-tambah').addClass('d-none')
 
-            var total = []
-
-            total_final = +total_product + +$('#total'+id).val();
-            total_payment = price * total_final
-
-
-            addStaging($('#total'+id).val(),id,name)
-            $('#total'+id).val('')
-            $('#spinner'+id).removeClass('d-none')
-            $('#btn-pesan'+id).addClass('d-none')
-            getStagingTotal()
-
-        }
-
-        function onClickValue(id){
-            temp_val = $('#total'+id).val()
-        }
-
-        function getStagingTotal(){
             $.ajax({
-                url: "{{route('getStagingCart')}}",
-                type: "GET",
-                dataType: "json",
-                success:function(data) {
-                    $('#total-payment').html(number_format(data.product_pay,0))
-                    $('#total-product').html(number_format(data.product_total,0))
-                }
-            });
-        }
-
-        function addStaging(product_total, product_id, name){
-            $.ajax({
-                url: "{{route('store_cart')}}",
+                url: "{{route('user.store')}}",
                 type: "POST",
                 dataType: "json",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    'product_total': product_total,
-                    'product_id': product_id,
+                    'name': $('#name').val(),
+                    'email': $('#email').val(),
+                    'password': $('#password').val(),
                 },
                 statusCode: {
                         500: function (response) {
                             Toastify({
-                                text: "Gagal menambahkan ke keranjang, isi total produk yang dibeli",
+                                text: "Gagal menambah seller",
                                 duration: 3000,
                                 close: true,
                                 gravity: "top",
                                 position: "center",
                                 backgroundColor: "#f3616d",
                             }).showToast();
-                            $('#spinner'+product_id).addClass('d-none')
-                            $('#btn-pesan'+product_id).removeClass('d-none')
+                            $('#spinner-tambah').addClass('d-none')
+                            $('#btn-tambah').removeClass('d-none')
                         },
                 },
                 success:function(data) {
                     Toastify({
-                        text: "Produk "+name+" berhasil ditambahkan",
+                        text: "Berhasil menambah seller",
                         duration: 3000,
                         close: true,
                         gravity: "top",
                         position: "center",
                         backgroundColor: "#4fbe87",
                     }).showToast();
-                    getCart()
-                    getStagingTotal()
-                    $('#spinner'+product_id).addClass('d-none')
-                    $('#btn-pesan'+product_id).removeClass('d-none')
-
-                    $('#input-search').val('')
-                    searchProduct()
+                    $('#form-user').trigger("reset");
+                    $('#spinner-tambah').addClass('d-none')
+                    $('#btn-tambah').removeClass('d-none')
+                    fetchUser()
                 }
             });
         }
 
-        function removeStaging(product_id, name){
-            $('#spinner-delete'+product_id).removeClass('d-none')
-            $('#btn-batal'+product_id).addClass('d-none')
+        function doEdit(id){
+            $('#edit-form'+id).removeClass('d-none')
+            $('#show-item'+id).addClass('d-none')
+        }
+
+        function doUpdate(id){
+
+            $('#spinner-update'+id).removeClass('d-none')
+            $('#btn-update'+id).addClass('d-none')
             $.ajax({
-                url: "{{route('remove_cart')}}",
-                type: "POST",
+                url: "{{route('user.update', 1)}}",
+                type: "PUT",
                 dataType: "json",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    'product_id': product_id,
+                    'id': id,
+                    'email': $('#email_form'+id).val(),
+                    'password': $('#password_form'+id).val(),
                 },
                 statusCode: {
                         500: function (response) {
                             Toastify({
-                                text: "Response: " + response,
+                                text: "Gagal mengubah informasi seller",
                                 duration: 3000,
                                 close: true,
                                 gravity: "top",
                                 position: "center",
                                 backgroundColor: "#f3616d",
                             }).showToast();
+                            $('#spinner-update'+id).addClass('d-none')
+                            $('#btn-update'+id).removeClass('d-none')
                         },
                 },
                 success:function(data) {
                     Toastify({
-                        text: "Produk "+name+" berhasil dibatalkan",
+                        text: "Berhasil mengubah informasi seller",
                         duration: 3000,
                         close: true,
                         gravity: "top",
                         position: "center",
-                        backgroundColor: "#f3616d",
+                        backgroundColor: "#4fbe87",
                     }).showToast();
-                    getCart()
-                    getStagingTotal()
-                    $('#spinner-delete'+product_id).addClass('d-none')
-                    $('#btn-batal'+product_id).removeClass('d-none')
+                    $('#spinner-update'+id).addClass('d-none')
+                    $('#btn-update'+id).removeClass('d-none')
+
+                    $('#edit-form'+id).addClass('d-none')
+                    $('#show-item'+id).removeClass('d-none')
+                    fetchUser()
                 }
             });
         }
 
-        function getCart(){
-            $.ajax({
-                url: "{{route('getCart')}}",
-                type: "GET",
-                dataType: "json",
-                success:function(data) {
-                    var html = ""
-                    data.data.forEach(item => {
-                        html += "<div class='row'>"
-                        +"<div class='col-3'><img src='{{url('img/martabak.jpg')}}' style='width: 90%'/></div>"
-                        +"<div class='col-5'>"
-                            +"<div class='row'>"
-                                +"<div class='col-12'>"
-                                    +"<small>"+item.name+"</small>"
-                                +"</div>"
-                            +"</div>"
-                            +"<div class='row'>"
-                                    +"<div class='col-12'>"
-                                        +"<p><b>Rp. <span id='item-price'>"+ number_format(item.price, 0) + " x " + item.product_total +"</span></b></p>"
-                                    +"</div>"
-                                +"</div>"
-                            +"</div>"
-                        +"<div class='col-4'>"
-                            +"<div class='row delete-button'>"
-                                +"<div class='col-12'>"
-                                    +"<div id='parent-btn"+item.id+"' class='col-8 remove-from-cart'>"
-                                    +"<div id='spinner-delete"+item.id+"' class='d-none'>"
-                                    +"<span class='spinner-grow spinner-grow-sm' role='status' aria-hidden='true'></span>"
-                                    +"Deleting"
-                                    +"</div>"
-                                    +"<b id='btn-batal"+item.id+"' onclick='removeStaging("+item.id+", \""+item.name+"\")'><i class='bi bi-cart-dash-fill'></i> Batal</b>"
-                                    +"</div>"
-                               +"</div>"
-                            +"</div>"
-                        +"</div>"
-                    +"</div>"
-                    +"<hr>"
-                    });
-                    $('.body-accordion').html(html)
-                }
-            });
+        function doCancel(id){
+            $('#edit-form'+id).addClass('d-none')
+            $('#show-item'+id).removeClass('d-none')
         }
 
         function openAccordion(){
@@ -402,103 +341,86 @@
             }
         }
 
-        function searchProduct(){
+        function fetchUser(){
             $.ajax({
-                url: "{{route('getProductSearch')}}",
-                type: "POST",
+                url: "{{route('fetchUser')}}",
+                type: "GET",
                 dataType: "json",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    'keyword': $('#input-search').val(),
-                },
+
                 success:function(data) {
                     var html = ""
                     data.data.forEach(item => {
-                        html += '<div class="row">'+
-                        '    <div class="col-12 col-md-12 col-lg-12">'+
-                        '        <div class="card">'+
-                        '            <div class="card-body">'+
-                        '                <div class="row">'+
-                        '                    <div class="col-4"><img src="{{url('img/martabak.jpg')}}" class="img-product"/></div>'+
-                        '                    <div class="col-8">'+
-                        '                        <div class="row">'+
-                        '                            <div class="col-12">'+
-                        '                                <small>'+item.name+'</small>'+
-                        '                            </div>'+
-                        '                        </div>'+
-                        '                        <div class="row">'+
-                        '                            <div class="col-12">'+
-                        '                                <p><b>Rp. <span id="item-price">'+ number_format(item.price, 0) +'</span></b></p>'+
-                        '                            </div>'+
-                        '                        </div>'+
-                        '                        <div class="row">'+
-                        ''+
-                        '                            <div id="parent-btn'+item.id+'" class="col-8 add-to-cart">'+
-                        '                                <div id="spinner'+item.id+'" class="d-none">'+
-                        '                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
-                        '                                    Processing...'+
-                        '                                </div>'+
-                        '                                <b class="d-block" id="btn-pesan'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-fill"></i> Keranjang</b>'+
-                        '                                {{-- <b class="d-none" id="btn-batal'+item.id+'" onclick="onPesan('+item.price+', '+item.id+', \''+item.name+'\')"><i class="bi bi-cart-dash-fill"></i> Batal</b> --}}'+
-                        '                            </div>'+
-                        '                            <div class="col-4">'+
-                        '                                <input type="number" onclick="onClickValue('+item.id+')" class="form-control-total" placeholder="0" id="total'+item.id+'">'+
-                        '                            </div>'+
-                        '                        </div>'+
-                        '                    </div>'+
-                        '                </div>'+
-                        '            </div>'+
-                        '        </div>'+
-                        '    </div>'+
-                        '</div>'
+
+                html += '<div id="show-item'+item.id+'">'+
+'                        <div class="row" style="align-items: center;">'+
+'                            <div class="col-8">'+
+'                                <div class="row">'+
+'                                    <div class="col-12">'+
+'                                        <span>'+item.email+'</span>'+
+'                                    </div>'+
+'                                </div>'+
+'                            </div>'+
+''+
+'                            <div class="col-4">'+
+'                                <div class="row delete-button">'+
+'                                    <div class="col-12">'+
+'                                        <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">'+
+'                                            <div id="spinner-edit" class="d-none">'+
+'                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
+'                                                Updating'+
+'                                            </div>'+
+'                                            <b id="btn-edit'+item.id+'" onclick="doEdit('+item.id+')"><i class="bi bi-pencil-fill"></i> Edit</b>'+
+'                                        </div>'+
+'                                    </div>'+
+'                                </div>'+
+'                            </div>'+
+'                        </div>'+
+'                        <hr>'+
+'                    </div>'+
+''+
+'                    <div id="edit-form'+item.id+'" class="d-none">'+
+'                        <div class="row" style="align-items: center;">'+
+'                            <div class="col-12">'+
+'                                <div class="row">'+
+'                                    <div class="col-12">'+
+'                                        <label for="email_form">Email</label>'+
+'                                        <input type="email" class="form-control" id="email_form'+item.id+'" value="'+item.email+'">'+
+'                                    </div>'+
+'                                </div>'+
+'                                <div class="row">'+
+'                                    <div class="col-12">'+
+'                                        <label for="password_form">Password</label>'+
+'                                        <input type="password" class="form-control" id="password_form'+item.id+'" placeholder="*******">'+
+'                                    </div>'+
+'                                </div>'+
+'                            </div>'+
+'                        </div>'+
+'                        <div class="row m-2">'+
+'                            <div class="col-12">'+
+'                                <div class="row delete-button">'+
+'                                    <div class="col-12">'+
+'                                        <div id="parent-btn-update" class="col-8 mb-2 add-to-cart">'+
+'                                            <div id="spinner-update'+item.id+'" class="d-none">'+
+'                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
+'                                                Updating'+
+'                                            </div>'+
+'                                            <b id="btn-update'+item.id+'" onclick="doUpdate('+item.id+')"><i class="bi bi-pencil-fill"></i> Update</b>'+
+'                                        </div>'+
+''+
+'                                        <div id="parent-btn-cancel" class="col-8 remove-from-cart">'+
+'                                            <b id="btn-batal" onclick="doCancel('+item.id+')"><i class="bi bi-x-square-fill"></i> Batal</b>'+
+'                                        </div>'+
+'                                    </div>'+
+'                                </div>'+
+'                            </div>'+
+'                        </div>'+
+'                        <hr>'+
+'                    </div>';
 
                     });
-                    $('#product-content').html(html)
+                    $('.body-accordion').html(html)
                 }
             });
         }
-
-        function checkoutProduct(){
-            $.ajax({
-                url: "{{route('checkoutProduct')}}",
-                type: "GET",
-                dataType: "json",
-                success:function(data) {
-                    Toastify({
-                        text: "Produk berhasil dipesan",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#4fbe87",
-                    }).showToast();
-                    $('#spinner').addClass('d-none')
-                    $('#text-pesan').removeClass('d-none')
-                }
-            });
-        }
-
-        $('#input-search').on('input', function(){
-            searchProduct()
-        });
-
-        $('.foot-accordion').click(function(){
-            if($('#text-pesan').hasClass('d-none')){
-                $('#text-pesan').removeClass('d-none')
-            }else{
-                $('#text-pesan').addClass('d-none')
-            }
-
-            if($('#spinner').hasClass('d-none')){
-                $('#spinner').removeClass('d-none')
-            }else{
-                $('#spinner').addClass('d-none')
-            }
-            checkoutProduct()
-            getCart()
-            getStagingTotal()
-        })
     </script>
 @endsection

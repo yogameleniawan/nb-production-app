@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'verified', 'can:admin'])->group(function () 
         'store' => StoreController::class,
         'user' => UserController::class
     ]);
+    Route::get('/fetchUser', [UserController::class, 'fetchUser'])->name('fetchUser');
 });
 
 Route::middleware(['auth:sanctum', 'verified', 'can:user'])->group(function () {

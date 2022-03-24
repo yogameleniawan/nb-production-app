@@ -50,7 +50,7 @@ class UserController extends Controller
         $table->role = 'seller';
         $table->save();
 
-        return redirect()->route('user.index');
+        return response()->json($table, 200);
     }
 
     /**
@@ -84,7 +84,17 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $table = User::find($request->id);
+        $table->email = $request->email;
+        if ($request->password == null) {
+            $table->password = $table->password;
+        } else {
+            $table->password = Hash::make($request->password);
+        }
+        $table->role = 'seller';
+        $table->save();
+
+        return response()->json($table, 200);
     }
 
     /**
@@ -96,5 +106,11 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function fetchUser()
+    {
+        $users = User::where('role', 'seller')->get();
+        return response()->json(['data' => $users], 200);
     }
 }
