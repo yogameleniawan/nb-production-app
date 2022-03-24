@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class StoreController extends Controller
 {
@@ -14,7 +16,8 @@ class StoreController extends Controller
      */
     public function index()
     {
-        //
+        $stores = Store::all();
+        return view('admin.stores.index', compact('stores'));
     }
 
     /**
@@ -35,7 +38,13 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $table = new Store();
+        $table->name = $request->name;
+        $table->address = $request->address;
+        $table->slug = Str::slug($request->name);
+        $table->save();
+
+        return response()->json($table, 200);
     }
 
     /**
@@ -69,7 +78,13 @@ class StoreController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $table = Store::find($request->id);
+        $table->name = $request->name;
+        $table->address = $request->address;
+        $table->slug = Str::slug($request->name);
+        $table->save();
+
+        return response()->json($table, 200);
     }
 
     /**
@@ -81,5 +96,11 @@ class StoreController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function fetchStore()
+    {
+        $data = Store::all();
+        return response()->json(['data' => $data], 200);
     }
 }

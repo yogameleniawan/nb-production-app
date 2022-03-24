@@ -17,7 +17,6 @@ class CreateStoresTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('address');
-            $table->string('image');
             $table->string('slug');
             $table->timestamps();
         });

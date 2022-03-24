@@ -14,6 +14,6 @@ class Store extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'id', 'name', 'image', 'address', 'slug'
+        'id', 'name', 'address', 'slug'
     ];
 }
