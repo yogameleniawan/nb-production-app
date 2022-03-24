@@ -103,9 +103,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $table = User::find($request->id);
+        $table->delete();
+
+        return response()->json($table, 200);
     }
 
     public function fetchUser()

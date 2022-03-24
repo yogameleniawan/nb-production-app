@@ -137,12 +137,14 @@
             border-radius: 10px;
         }
 
+
+
     </style>
 </head>
 
 <body>
     <div id="app">
-        <div class="active">
+        <div id="sidebar" class="active">
             <div class="sidebar-wrapper active">
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
@@ -225,7 +227,7 @@
         </div>
         <div id="main" class='layout-navbar'>
             <header>
-                <nav id="navbar" class="navbar navbar-expand navbar-light ">
+                <nav class="navbar navbar-expand navbar-light ">
                     <div class="container-fluid">
                         <a href="#" class="burger-btn d-block">
                             <i class="bi bi-justify fs-3"></i>

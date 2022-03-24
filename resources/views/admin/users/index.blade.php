@@ -148,7 +148,7 @@
 
                     <div id="show-item{{$item->id}}">
                         <div class="row" style="align-items: center;">
-                            <div class="col-8">
+                            <div class="col-7">
                                 <div class="row">
                                     <div class="col-12">
                                         <span>{{$item->email}}</span>
@@ -156,7 +156,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-4">
+                            <div class="col-5">
                                 <div class="row delete-button">
                                     <div class="col-12">
                                         <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">
@@ -165,6 +165,15 @@
                                                 Updating
                                             </div>
                                             <b id="btn-edit{{$item->id}}" onclick="doEdit({{$item->id}})"><i class="bi bi-pencil-fill"></i> Edit</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div id="parent-btn-delete" class="col-8 mb-2 remove-from-cart">
+                                            <div id="spinner-delete{{$item->id}}" class="d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                                Deleting
+                                            </div>
+                                            <b id="btn-delete{{$item->id}}" onclick="doRemove({{$item->id}})">Hapus</b>
                                         </div>
                                     </div>
                                 </div>
@@ -324,6 +333,53 @@
             });
         }
 
+        function doRemove(id)
+        {
+            $('#spinner-delete'+id).removeClass('d-none')
+            $('#btn-delete'+id).addClass('d-none')
+            $.ajax({
+                url: "{{route('user.destroy', 1)}}",
+                type: "DELETE",
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'id': id,
+                },
+                statusCode: {
+                        500: function (response) {
+                            Toastify({
+                                text: "Gagal menghapus seller",
+                                duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "center",
+                                backgroundColor: "#f3616d",
+                            }).showToast();
+                            $('#spinner-update'+id).addClass('d-none')
+                            $('#btn-update'+id).removeClass('d-none')
+                        },
+                },
+                success:function(data) {
+                    Toastify({
+                        text: "Berhasil menghapus seller",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#4fbe87",
+                    }).showToast();
+                    $('#spinner-delete'+id).addClass('d-none')
+                    $('#btn-delete'+id).removeClass('d-none')
+
+                    $('#edit-form'+id).addClass('d-none')
+                    $('#show-item'+id).removeClass('d-none')
+                    fetchUser()
+                }
+            });
+        }
+
         function doCancel(id){
             $('#edit-form'+id).addClass('d-none')
             $('#show-item'+id).removeClass('d-none')
@@ -353,7 +409,7 @@
 
                 html += '<div id="show-item'+item.id+'">'+
 '                        <div class="row" style="align-items: center;">'+
-'                            <div class="col-8">'+
+'                            <div class="col-7">'+
 '                                <div class="row">'+
 '                                    <div class="col-12">'+
 '                                        <span>'+item.email+'</span>'+
@@ -361,7 +417,7 @@
 '                                </div>'+
 '                            </div>'+
 ''+
-'                            <div class="col-4">'+
+'                            <div class="col-5">'+
 '                                <div class="row delete-button">'+
 '                                    <div class="col-12">'+
 '                                        <div id="parent-btn-edit" class="col-8 mb-2 add-to-cart">'+
@@ -370,6 +426,14 @@
 '                                                Updating'+
 '                                            </div>'+
 '                                            <b id="btn-edit'+item.id+'" onclick="doEdit('+item.id+')"><i class="bi bi-pencil-fill"></i> Edit</b>'+
+'                                        </div>'+
+'                                    <div class="col-12">'+
+'                                        <div id="parent-btn-delete" class="col-8 mb-2 remove-from-cart">'+
+'                                            <div id="spinner-delete'+item.id+'" class="d-none">'+
+'                                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'+
+'                                                Deleting'+
+'                                            </div>'+
+'                                            <b id="btn-delete'+item.id+'" onclick="doRemove('+item.id+')">Hapus</b>'+
 '                                        </div>'+
 '                                    </div>'+
 '                                </div>'+
