@@ -407,7 +407,7 @@
                     var html = ""
                     data.data.forEach(item => {
 
-                html += '<div id="show-item'+item.id+'">'+
+                        html += '<div id="show-item'+item.id+'">'+
 '                        <div class="row" style="align-items: center;">'+
 '                            <div class="col-7">'+
 '                                <div class="row">'+
@@ -427,6 +427,7 @@
 '                                            </div>'+
 '                                            <b id="btn-edit'+item.id+'" onclick="doEdit('+item.id+')"><i class="bi bi-pencil-fill"></i> Edit</b>'+
 '                                        </div>'+
+'                                    </div>'+
 '                                    <div class="col-12">'+
 '                                        <div id="parent-btn-delete" class="col-8 mb-2 remove-from-cart">'+
 '                                            <div id="spinner-delete'+item.id+'" class="d-none">'+
@@ -435,7 +436,7 @@
 '                                            </div>'+
 '                                            <b id="btn-delete'+item.id+'" onclick="doRemove('+item.id+')">Hapus</b>'+
 '                                        </div>'+
-'                                    </div>'+
+'                                    </div>' +
 '                                </div>'+
 '                            </div>'+
 '                        </div>'+

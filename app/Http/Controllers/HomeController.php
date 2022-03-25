@@ -14,24 +14,32 @@ class HomeController extends Controller
 {
     public function produk(Request $request)
     {
-        $stores = Store::where('slug', $request->name)->first();
-        $products = Product::where('store_id', $stores->id)->get();
-        $product_count = Product::where('store_id', $stores->id)->count();
-        $carts = Cart::where('status', 'staging')->where('user_id', Auth::user()->id)->get();
-        $product_total = 0;
-        $product_pay = 0;
+        if ($request->name != null) {
+            $stores = Store::where('slug', $request->name)->first();
+            if ($stores == null) {
+                return view('fallback');
+            } else {
+                $products = Product::where('store_id', $stores->id)->get();
+                $product_count = Product::where('store_id', $stores->id)->count();
+                $carts = Cart::where('status', 'staging')->where('user_id', Auth::user()->id)->get();
+                $product_total = 0;
+                $product_pay = 0;
 
-        foreach ($carts as $item) {
-            $product_total += $item->product_total;
-            $product = Product::find($item->product_id);
-            $product_pay += $product_total * $product->price;
+                foreach ($carts as $item) {
+                    $product_total += $item->product_total;
+                    $product = Product::find($item->product_id);
+                    $product_pay += $product_total * $product->price;
+                }
+
+                $cart_users = DB::table('carts')
+                    ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+                    ->where('status', 'staging')
+                    ->where('user_id', Auth::user()->id)->get();
+                return view('user.produk.index', compact('products', 'product_count', 'product_total', 'product_pay', 'cart_users'));
+            }
+        } else {
+            return view('fallback');
         }
-
-        $cart_users = DB::table('carts')
-            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
-            ->where('status', 'staging')
-            ->where('user_id', Auth::user()->id)->get();
-        return view('user.produk.index', compact('products', 'product_count', 'product_total', 'product_pay', 'cart_users'));
     }
 
     public function pesanan(Request $request)
