@@ -498,6 +498,8 @@
                     }).showToast();
                     $('#spinner').addClass('d-none')
                     $('#text-pesan').removeClass('d-none')
+                    getCart()
+                    getStagingTotal()
                 }
             });
         }
@@ -519,8 +521,6 @@
                 $('#spinner').addClass('d-none')
             }
             checkoutProduct()
-            getCart()
-            getStagingTotal()
         })
     </script>
 @endsection

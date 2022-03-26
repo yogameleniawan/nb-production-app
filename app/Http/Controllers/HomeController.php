@@ -17,7 +17,7 @@ class HomeController extends Controller
         if ($request->name != null) {
             $stores = Store::where('slug', $request->name)->first();
             if ($stores == null) {
-                return view('fallback');
+                return view('user.produk.not-found');
             } else {
                 $products = Product::where('store_id', $stores->id)->get();
                 $product_count = Product::where('store_id', $stores->id)->count();
@@ -38,7 +38,7 @@ class HomeController extends Controller
                 return view('user.produk.index', compact('products', 'product_count', 'product_total', 'product_pay', 'cart_users'));
             }
         } else {
-            return view('fallback');
+            return view('user.produk.not-found');
         }
     }
 
