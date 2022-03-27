@@ -205,29 +205,27 @@
                             </a>
                         </li>
                         @endcan
-                        {{-- <li
-                            class="sidebar-item has-sub {{ Route::is('program.create') || Route::is('program.index') || Route::is('history.index') ? 'active' : '' }}">
-                            <a href="javascript:void(0);" class='sidebar-link'>
-                                <i class="bi bi-book-half"></i>
+
+                        @can('seller')
+                        <li class="sidebar-item ">
+                            <a href="{{route('transaksi.index')}}" class='sidebar-link'>
+                                <i class="bi bi-cart-fill"></i>
                                 <span>
-                                    {{ __('student.menu.application') }}
+                                    PESANAN
                                 </span>
                             </a>
-                            <ul
-                                class="submenu {{ Route::is('program.create') || Route::is('program.index') || Route::is('history.index') ? 'active' : '' }}">
-                                <li
-                                    class="submenu-item {{ Route::is('program.create') || Route::is('program.index') ? 'active' : '' }}">
-                                    <a href="{{ route('program.index') }}">
-                                        {{ __('student.menu.startnewapplication') }}
-                                    </a>
-                                </li>
-                                <li class="submenu-item {{ Route::is('history.index') ? 'active' : '' }}">
-                                    <a href="{{ route('history.index') }}">
-                                        {{ __('student.menu.applyhistory') }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
+                        </li>
+                        <li class="sidebar-item  ">
+                            <a href="{{route('produk-toko.index')}}" class='sidebar-link'>
+                                <i class="bi bi-hdd-stack-fill"></i>
+                                <span>
+                                    PRODUK
+                                </span>
+                            </a>
+                        </li>
+                        @endcan
+
+
 
                     </ul>
                 </div>

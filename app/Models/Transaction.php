@@ -14,4 +14,9 @@ class Transaction extends Model
     protected $fillable = [
         'id',
     ];
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

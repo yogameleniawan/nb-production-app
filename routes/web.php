@@ -35,6 +35,9 @@ Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function ()
         'produk-toko' => ProductController::class,
         'transaksi' => CartController::class
     ]);
+    Route::get('/getCompleteCart', [CartController::class, 'getCompleteCart'])->name('getCompleteCart');
+    Route::get('/getComplete', [CartController::class, 'getComplete'])->name('getComplete');
+    Route::get('/fetchProduct', [ProductController::class, 'fetchProduct'])->name('fetchProduct');
 });
 
 Route::middleware(['auth:sanctum', 'verified', 'can:admin'])->group(function () {
