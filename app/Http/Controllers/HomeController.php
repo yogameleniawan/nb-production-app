@@ -124,7 +124,8 @@ class HomeController extends Controller
 
     public function getProductSearch(Request $request)
     {
-        $data = Product::where('name', 'LIKE', "%$request->keyword%")->get();
+        $store = Store::where('slug', $request->name)->first();
+        $data = Product::where('name', 'LIKE', "%$request->keyword%")->where('store_id', $store->id)->get();
         return response()->json(['data' => $data], 200);
     }
 
