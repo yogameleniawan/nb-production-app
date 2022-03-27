@@ -200,6 +200,10 @@
 @endsection
 @section('script')
     <script>
+        window.setInterval(function(){
+            getComplete()
+            getCompleteCart()
+        }, 5000);
 
         function getCompleteCart(){
             $.ajax({
@@ -216,7 +220,6 @@
         function updateTransaction(transaction_id){
             $('#spinner-delete'+transaction_id).removeClass('d-none')
             $('#btn-batal'+transaction_id).addClass('d-none')
-            console.log('klik')
             $.ajax({
                 url: "{{route('transaksi.update','1')}}",
                 type: "PUT",
@@ -240,7 +243,6 @@
                         },
                 },
                 success:function(data) {
-                    console.log('tes')
                     Toastify({
                         text: "Produk berhasil diproses",
                         duration: 3000,
@@ -265,7 +267,6 @@
                 success:function(data) {
                     var html = ""
                     data.data.forEach(item => {
-                        console.log(item)
                         var total = 0
                         total = item.cart[0].product.price * item.cart[0].product_total
                         html += `
