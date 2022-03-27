@@ -268,7 +268,17 @@
                     var html = ""
                     data.data.forEach(item => {
                         var total = 0
+                        var detail = ""
                         total = item.cart[0].product.price * item.cart[0].product_total
+                        item.cart.forEach(relation => {
+                            detail +=
+                                 `<div class="row">
+                                    <div class="col-12">
+                                        <p><b>Produk : </b>${relation.product.name}</p>
+                                        <p><b>Rp. <span id="item-price">${number_format(relation.product.price, 0)} x ${relation.product_total}</span></b></p>
+                                    </div>
+                                </div>`
+                            })
                         html += `
                 <div class="row">
                         <div class="col-3"><img src="${item.cart[0].product.image}" style="width: 90%"/></div>
@@ -279,13 +289,7 @@
                                 </div>
                             </div>
                             <hr>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <p><b>Produk : </b>${item.cart[0].product.name}</p>
-                                        <p><b>Rp. <span id="item-price">${number_format(item.cart[0].product.price, 0)} x ${item.cart[0].product_total}</span></b></p>
-                                    </div>
-                                </div>
-                            <hr>
+                            `+detail+`<hr>
                             <div class="row">
                                 <div class="col-12">
                                     <small>Total Bayar : </small><br>

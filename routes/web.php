@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\StoreSellerController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Seller\CartController;
 use App\Http\Controllers\Seller\ProductController;
@@ -31,6 +32,7 @@ Route::get('/', function () {
 // });
 
 Route::middleware(['auth:sanctum', 'verified', 'can:seller'])->group(function () {
+    Route::get('/generateBarcode', [BarcodeController::class, 'generateBarcode'])->name('generateBarcode');
     Route::resources([
         'produk-toko' => ProductController::class,
         'transaksi' => CartController::class

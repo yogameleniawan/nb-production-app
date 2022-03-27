@@ -33,7 +33,7 @@ class LoginController extends Controller
         if (Auth::user()->role == 'user') {
             return $this->redirectTo = route('produk');
         } else if (Auth::user()->role == 'seller') {
-            return $this->redirectTo = route('produk-toko.index');
+            return $this->redirectTo = route('transaksi.index');
         } else if (Auth::user()->role == 'admin') {
             return $this->redirectTo = route('user.index');
         }
