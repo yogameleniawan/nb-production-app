@@ -187,12 +187,12 @@
                         <div class="col-4">
                             <div class="row delete-button">
                                 <div class="col-12">
-                                    <div id="parent-btn{{$item->id}}" class="col-8 add-to-cart">
-                                        <div id="spinner-delete{{$item->id}}" class="d-none">
+                                    <div id="parent-btn{{$item->transaction_id}}" class="col-8 add-to-cart">
+                                        <div id="spinner-delete{{$item->transaction_id}}" class="d-none">
                                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Processing
                                         </div>
-                                        <b id="btn-batal{{$item->id}}" onclick="updateTransaction({{$item->transaction_id}},)"><i class="bi bi-cart-fill"></i> Proses</b>
+                                        <b id="btn-batal{{$item->transaction_id}}" onclick="updateTransaction({{$item->transaction_id}},)"><i class="bi bi-cart-fill"></i> Proses</b>
                                     </div>
                                 </div>
                             </div>
@@ -276,9 +276,10 @@
                 success:function(data) {
                     var html = ""
                     var user = ""
-                    var total = 0
+
                     data.data.forEach(item => {
                         var detail = ""
+                        var total = 0
                         data.users.forEach(data => {
                             if(item.user_id == data.id){
                                 user = data.name
