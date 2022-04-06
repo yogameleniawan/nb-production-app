@@ -149,7 +149,7 @@
                 <div class="body-accordion">
                     @foreach ($cart_users as $item)
                     <div class="row">
-                        <div class="col-3"><img src="{{url('img/martabak.jpg')}}" style="width: 90%"/></div>
+                        <div class="col-3"><img src="{{url($item->image)}}" style="width: 90%"/></div>
                         <div class="col-9">
                             <div class="row">
                                 <div class="col-12">
@@ -321,7 +321,7 @@
                     var html = ""
                     data.data.forEach(item => {
                         html += "<div class='row'>"
-                        +"<div class='col-3'><img src='{{url('img/martabak.jpg')}}' style='width: 90%'/></div>"
+                        +"<div class='col-3'><img src='{{url("+item.image+")}}' style='width: 90%'/></div>"
                         +"<div class='col-5'>"
                             +"<div class='row'>"
                                 +"<div class='col-12'>"
@@ -386,7 +386,7 @@
                         '        <div class="card">'+
                         '            <div class="card-body">'+
                         '                <div class="row">'+
-                        '                    <div class="col-4"><img src="{{url('img/martabak.jpg')}}" class="img-product"/></div>'+
+                        '                    <div class="col-4"><img src="{{url('+item.image+')}}" class="img-product"/></div>'+
                         '                    <div class="col-8">'+
                         '                        <div class="row">'+
                         '                            <div class="col-12">'+

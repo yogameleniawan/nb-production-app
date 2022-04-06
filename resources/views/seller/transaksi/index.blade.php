@@ -100,7 +100,7 @@
                     <div class="row">
                         <div class="col-12">
                             <b>Produk</b><br>
-                            <p>Pesanan Anda</p>
+                            <p>Pesanan Pelanggan</p>
                         </div>
                         <div class="col-12">
                             <div class="row">
@@ -147,25 +147,34 @@
                     <p onclick="openAccordion()"><i id="icon-accordion" class="bi bi-caret-down-square-fill"></i> Lihat Pesanan Anda </p>
                 </div>
                 <div class="body-accordion">
-                    @foreach ($transactions as $item)
+                    @foreach ($transaction as $item)
+
                     <div class="row">
-                        <div class="col-3"><img src="{{$item->cart[0]->product->image}}" style="width: 90%"/></div>
-                        <div class="col-5">
+                        <div class="col-8">
                             <div class="row">
                                 <div class="col-12">
-                                    <small>{{$item->cart[0]->user->name}}</small>
+                                    <small>Nama Pelanggan : @foreach ($users as $u)
+                                        @if ($u->id == $item->user_id)
+                                        {{$u->name}}
+                                        @endif
+                                        @endforeach</small>
                                 </div>
                             </div>
                             <hr>
                             <div class="d-none">{{$total = 0}}</div>
-                            @foreach ($item->cart as $i)
-                            <div class="d-none">{{$total += $i->product->price * $i->product_total}}</div>
+                            @foreach ($carts as $i)
+                            @if ($i->transaction_id == $item->transaction_id)
+                            <div class="d-none">{{$total += $i->price * $i->product_total}}</div>
                             <div class="row">
-                                <div class="col-12">
-                                    <p><b>Produk : </b>{{$i->product->name}}</p>
-                                    <p><b>Rp. <span id="item-price">{{ number_format($i->product->price, 0) }} x {{$i->product_total}}</span></b></p>
+                                <div class="col-4">
+                                    <img src="{{url($i->image)}}" width="100%">
+                                </div>
+                                <div class="col-8">
+                                    <p><b>Produk : </b>{{$i->name}}</p>
+                                    <p><b>Rp. <span id="item-price">{{ number_format($i->price, 0) }} x {{$i->product_total}}</span></b></p>
                                 </div>
                             </div>
+                            @endif
                             @endforeach
                             <hr>
                             <div class="row">
@@ -183,7 +192,7 @@
                                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Processing
                                         </div>
-                                        <b id="btn-batal{{$item->id}}" onclick="updateTransaction({{$item->id}},)"><i class="bi bi-cart-fill"></i> Proses</b>
+                                        <b id="btn-batal{{$item->id}}" onclick="updateTransaction({{$item->transaction_id}},)"><i class="bi bi-cart-fill"></i> Proses</b>
                                     </div>
                                 </div>
                             </div>
@@ -266,26 +275,37 @@
                 dataType: "json",
                 success:function(data) {
                     var html = ""
+                    var user = ""
+                    var total = 0
                     data.data.forEach(item => {
-                        var total = 0
                         var detail = ""
-                        total = item.cart[0].product.price * item.cart[0].product_total
-                        item.cart.forEach(relation => {
-                            detail +=
-                                 `<div class="row">
-                                    <div class="col-12">
-                                        <p><b>Produk : </b>${relation.product.name}</p>
-                                        <p><b>Rp. <span id="item-price">${number_format(relation.product.price, 0)} x ${relation.product_total}</span></b></p>
-                                    </div>
-                                </div>`
+                        data.users.forEach(data => {
+                            if(item.user_id == data.id){
+                                user = data.name
+                            }
+                        })
+                        data.carts.forEach(relation => {
+                            if(relation.transaction_id == item.transaction_id){
+                                total += relation.price * relation.product_total
+                                detail +=
+                                    `<div class="row">
+                                        <div class="col-4">
+                                            <img src="${relation.image}" width="100%">
+                                        </div>
+                                        <div class="col-8">
+                                            <p><b>Produk : </b>${relation.name}</p>
+                                            <p><b>Rp. <span id="item-price">${number_format(relation.price, 0)} x ${relation.product_total}</span></b></p>
+                                        </div>
+                                    </div>`
+                            }
+
                             })
                         html += `
                 <div class="row">
-                        <div class="col-3"><img src="${item.cart[0].product.image}" style="width: 90%"/></div>
-                        <div class="col-5">
+                        <div class="col-8">
                             <div class="row">
                                 <div class="col-12">
-                                    <small>${item.cart[0].user.name}</small>
+                                    <small>Nama Pelanggan : ${user}</small>
                                 </div>
                             </div>
                             <hr>
@@ -305,7 +325,7 @@
                                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Processing
                                         </div>
-                                        <b id="btn-batal${item.id}" onclick="updateTransaction(${item.id})"><i class="bi bi-cart-fill"></i> Proses</b>                                    </div>
+                                        <b id="btn-batal${item.id}" onclick="updateTransaction(${item.transaction_id})"><i class="bi bi-cart-fill"></i> Proses</b>                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // return view('welcome');
-    // return redirect()->route('login');
-    return view('fallback');
+    return redirect()->route('login');
+    // return view('fallback');
 });
 
 // Route::get('/csrf', function () {
@@ -75,3 +75,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::fallback(function () {
     return view('auth.register');
 });
+
+

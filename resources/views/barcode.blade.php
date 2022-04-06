@@ -27,6 +27,5 @@
         <h1>Toko : {{$store->name}}</h1>
         {!! DNS2D::getBarcodeHTML(url('/toko?name='. $store->slug), 'QRCODE') !!}
     </div>
-
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,23 +27,37 @@ class CartController extends Controller
         $carts = Cart::where('status', 'checkout')->get();
         $product_total = 0;
         $product_pay = 0;
-        $transactions = Transaction::with('cart.product', 'cart.user')
-            ->with('cart', function ($query) {
 
-                $query->where('carts.status', 'checkout');
-            })
+        $carts = DB::table('carts')
+            ->leftJoin('transactions', 'carts.transaction_id', '=', 'transactions.id')
+            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+            ->leftJoin('stores', 'products.store_id', '=', 'stores.id')
+            ->where('products.store_id', $user_store->store_id)
             ->get();
+
+        $transaction = DB::table('carts')
+            ->leftJoin('transactions', 'carts.transaction_id', '=', 'transactions.id')
+            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+            ->leftJoin('stores', 'products.store_id', '=', 'stores.id')
+            ->where('products.store_id', $user_store->store_id)
+            ->groupBy('carts.transaction_id')
+            ->get();
+        $users = User::all();
+
         foreach ($carts as $item) {
             $product_total += $item->product_total;
-            $product = Product::find($item->product_id);
-            $product_pay += $product_total * $product->price;
+        }
+
+        foreach ($carts as $item) {
+            $product_pay += $item->product_total * $item->price;
         }
 
         $cart_users = DB::table('carts')
             ->leftJoin('products', 'carts.product_id', '=', 'products.id')
             ->where('status', 'checkout')
             ->get();
-        return view('seller.transaksi.index', compact('products', 'product_count', 'product_total', 'product_pay', 'cart_users', 'transactions'));
+
+        return view('seller.transaksi.index', compact('products', 'product_count', 'product_total', 'product_pay', 'cart_users', 'transaction', 'users', 'carts'));
     }
 
     /**
@@ -118,14 +133,26 @@ class CartController extends Controller
 
     public function getCompleteCart()
     {
+        $user_store = UserStore::where('user_id', Auth::user()->id)->first();
         $carts = Cart::where('status', 'checkout')->get();
         $product_total = 0;
         $product_pay = 0;
+
+        $carts = DB::table('carts')
+            ->leftJoin('transactions', 'carts.transaction_id', '=', 'transactions.id')
+            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+            ->leftJoin('stores', 'products.store_id', '=', 'stores.id')
+            ->where('products.store_id', $user_store->store_id)
+            ->get();
+
         foreach ($carts as $item) {
             $product_total += $item->product_total;
-            $product = Product::find($item->product_id);
-            $product_pay += $product_total * $product->price;
         }
+
+        foreach ($carts as $item) {
+            $product_pay += $item->product_total * $item->price;
+        }
+
         return response()->json(
             [
                 'product_total' => $product_total,
@@ -137,12 +164,23 @@ class CartController extends Controller
 
     public function getComplete()
     {
-        $transactions = Transaction::with('cart.product', 'cart.user')
-            ->with('cart', function ($query) {
-
-                $query->where('carts.status', 'checkout');
-            })
+        $user_store = UserStore::where('user_id', Auth::user()->id)->first();
+        $carts = DB::table('carts')
+            ->leftJoin('transactions', 'carts.transaction_id', '=', 'transactions.id')
+            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+            ->leftJoin('stores', 'products.store_id', '=', 'stores.id')
+            ->where('products.store_id', $user_store->store_id)
             ->get();
-        return response()->json(['data' => $transactions], 200);
+
+        $transactions = DB::table('carts')
+            ->leftJoin('transactions', 'carts.transaction_id', '=', 'transactions.id')
+            ->leftJoin('products', 'carts.product_id', '=', 'products.id')
+            ->leftJoin('stores', 'products.store_id', '=', 'stores.id')
+            ->where('products.store_id', $user_store->store_id)
+            ->groupBy('carts.transaction_id')
+            ->get();
+        $users = User::all();
+
+        return response()->json(['data' => $transactions, 'users' => $users, 'carts' => $carts], 200);
     }
 }
